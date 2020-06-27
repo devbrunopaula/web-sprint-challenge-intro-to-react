@@ -1,19 +1,67 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import styled, { ThemeProvider } from 'styled-components'
+import axios from 'axios'
 import './App.css';
+import TopNav from './components/Navigation/TopNav';
+import Character from './components/Character';
+import ApiData from './data.js'
 
 const App = () => {
-  // Try to think through what state you'll need for this app before starting. Then build out
-  // the state properties here.
+  const [ data, setData ] = useState([])
 
-  // Fetch characters from the API in an effect hook. Remember, anytime you have a 
-  // side effect in a component, you want to think about which state and/or props it should
-  // sync up with, if any.
+
+
+
+// https://rickandmortyapi.com/
+const fetchrickandmorty = async () => {
+
+ try {
+    
+    const fetchedData = await axios.get(`https://rickandmortyapi.com/api/character/`)
+    const response =  fetchedData.data
+    setData(response.results)
+    ApiData(response.results)
+    
+    
+  } catch (error) {
+    console.log(error)
+   
+  }
+}
+
+
+//Styled Components
+const theme = {
+  primary: 'blue',
+  data: data
+}
+
+
+//  UseEffect
+useEffect(() => {
+  fetchrickandmorty()
+  
+},[])
+
+
 
   return (
-    <div className="App">
-      <h1 className="Header">Characters</h1>
-    </div>
+    <ThemeProvider theme={theme}>
+      <TopNav/>
+      <Container>
+        <Character data={data}/>
+      </Container>
+   </ThemeProvider>
   );
 }
 
 export default App;
+
+
+const Container = styled.div`
+width: 90vw;
+height: 100vh;
+max-width: 1000px;
+margin: 30px auto;
+
+`
